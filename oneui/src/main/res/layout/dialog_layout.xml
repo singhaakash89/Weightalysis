@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/coral_new">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="13dp"
+            android:fontFamily="@string/font_family_light"
+            android:text="Enter weight and date"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/framelayout"
+        android:background="@color/navy_blue_light"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/framelayout"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/textView_weight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:text="Weight : "
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:hint="Enter your weight"
+            android:inputType="number"
+            android:maxLength="3"
+            android:textColor="@color/white"
+            android:textColorHighlight="@color/accent"
+            android:textColorHint="@color/low_grey_color"
+            android:layout_toEndOf="@id/textView_weight"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:textAlignment="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/framelayout"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/textView_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="96dp"
+                android:layout_marginTop="10dp"
+                android:text="Date : "
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/dateTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="23dp"
+                android:layout_marginTop="10dp"
+                android:text="Select Date"
+                android:textColor="@color/low_grey_color"
+                android:textSize="18sp"
+                android:layout_toEndOf="@id/textView_date"/>
+
+            <!---->
+            <!--<EditText-->
+                <!--android:id="@+id/dateET"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:focusable="true"-->
+                <!--android:hint="Select date"-->
+                <!--android:inputType="none"-->
+                <!--android:maxLength="3"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:textColorHighlight="@color/accent"-->
+                <!--android:textColorHint="@color/low_grey_color"-->
+                <!--android:layout_toEndOf="@id/textView_date"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:textAlignment="center"/>-->
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:text="Record"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
