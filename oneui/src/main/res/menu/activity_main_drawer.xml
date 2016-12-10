@@ -8,18 +8,18 @@
             android:title="Home" />
         <item
             android:id="@+id/nav_graph_date"
-            android:icon="@drawable/ic_graph_new"
-            android:title="Graph by Date" />
+            android:icon="@drawable/ic_graph"
+            android:title="Daily Graph" />
 
         <item
             android:id="@+id/nav_graph_week"
-            android:icon="@drawable/ic_graph_new"
-            android:title="Graph by Week" />
+            android:icon="@drawable/ic_graph_week"
+            android:title="Weekly Graph" />
 
         <item
-            android:id="@+id/nav_graph_year"
-            android:icon="@drawable/ic_graph_new"
-            android:title="Graph by Year" />
+            android:id="@+id/nav_graph_month"
+            android:icon="@drawable/ic_graph_month"
+            android:title="Monthly Graph" />
     </group>
 
 </menu>

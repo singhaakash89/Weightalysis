@@ -13,6 +13,12 @@
         android:layout_height="wrap_content"
         android:background="@color/primary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/MyCustomToolbarTheme"/>
+        app:theme="@style/MyCustomToolbarTheme">
+
+        <!--Can keepp text view -->
+
+        <!--can keep imageview-->
+
+    </android.support.v7.widget.Toolbar>
 
 </android.support.design.widget.AppBarLayout>

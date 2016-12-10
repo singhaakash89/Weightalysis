@@ -8,8 +8,8 @@ public class WeightAccessor {
     public static final String ID = "id";
     public static final String WEIGHT = "weight";
     public static final String DATE = "date";
+    public static final String WEEK = "week";
     public static final String MONTH = "month";
-    public static final String YEAR = "year";
 
     public static String getID() {
         return ID;
@@ -23,12 +23,12 @@ public class WeightAccessor {
         return DATE;
     }
 
-    public static String getMONTH() {
-        return MONTH;
+    public static String getWEEK() {
+        return WEEK;
     }
 
-    public static String getYEAR() {
-        return YEAR;
+    public static String getMONTH() {
+        return MONTH;
     }
 
     public static String[] getTableProjection() {
@@ -36,8 +36,8 @@ public class WeightAccessor {
                 getID(),
                 getWEIGHT(),
                 getDATE(),
-                getMONTH(),
-                getYEAR()};
+                getWEEK(),
+                getMONTH(),};
         return projection;
     }
 
