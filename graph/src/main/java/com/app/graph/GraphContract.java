@@ -1,16 +1,11 @@
 package com.app.graph;
 
 import android.database.Cursor;
-import android.view.View;
 
-import com.app.graph.data_storage.GraphDataDataStorageProvider;
 import com.app.graph.inheritance.CustomDataPoint;
 import com.app.graph.model.GraphType;
-import com.app.weightalysis.data_storage.accessor.WeightAccessor;
-import com.app.weightalysis.data_storage.model.UserBean;
-import com.app.weightalysis.data_storage.schema.WeightSchemaBuilder;
+import com.app.weightalysis.data_storage.model.WeightBean;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
 
 import java.util.ArrayList;
 
@@ -25,19 +20,23 @@ public interface GraphContract {
 
     void drawGraphByMonth(GraphView graphView, String year);
 
-    UserBean createUserFromCursor(Cursor cursor);
+    WeightBean createUserFromCursor(Cursor cursor);
 
-    ArrayList<UserBean> getUserBeanArrayList(Cursor cursor);
+    ArrayList<WeightBean> getUserBeanArrayList(Cursor cursor);
 
-    CustomDataPoint[] initializeDataPointsFromList(CustomDataPoint[] dataPoint, ArrayList<UserBean> userBeanArrayList, GraphType graphType);
+    CustomDataPoint[] initializeDataPointsFromList(CustomDataPoint[] dataPoint, ArrayList<WeightBean> weightBeanArrayList, GraphType graphType);
 
     public Cursor getDayCursor(int month, int year);
 
-    public Cursor getWeekCursor(int month, int year);
+    public Cursor getWeek1Cursor(int month);
+
+    public Cursor getWeek2and3Cursor(int month, int date1, int date2);
+
+    public Cursor getWeek4Cursor(int month);
 
     public Cursor getMonthCursor(int month, int year);
 
-    public ArrayList<UserBean> getMonthDataPoint(int year);
+    public ArrayList<WeightBean> getMonthDataPoint(int year);
 
-    public int getMonthAvgWeight(int totalWeight, int count);
+    public int getAvgWeight(int totalWeight, int count);
 }

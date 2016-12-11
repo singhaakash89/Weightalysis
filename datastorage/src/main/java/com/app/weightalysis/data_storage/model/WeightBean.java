@@ -8,7 +8,7 @@ import com.app.weightalysis.data_storage.accessor.WeightAccessor;
  * Created by Aakash Singh on 09-12-2016.
  */
 
-public class UserBean {
+public class WeightBean {
     private int weight;
     private int date;
     private int month;

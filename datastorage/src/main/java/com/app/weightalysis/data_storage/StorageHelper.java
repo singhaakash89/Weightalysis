@@ -19,6 +19,12 @@ public interface StorageHelper {
 
     public Cursor queryForSelectedCols(String tableName, String[] columns, String whereCol1, String whereCol2, int arg1, int arg2);
 
+    public Cursor queryForWeek1(String tableName, String[] columns, String whereCol1, int arg1);
+
+    public Cursor queryForWeek2and3(String tableName, String[] columns, String whereCol1, int arg1, int arg2, int arg3);
+
+    public Cursor queryForWeek4(String tableName, String[] columns, String whereCol1, int arg1);
+
     public int deleteFromDB();
 
 }

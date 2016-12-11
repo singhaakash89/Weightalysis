@@ -9,17 +9,14 @@ import com.app.graph.data_storage.GraphDataStorageContract;
 import com.app.graph.inheritance.CustomDataPoint;
 import com.app.graph.interpreter.MonthInterpreter;
 import com.app.graph.model.GraphType;
-import com.app.graph.model.Month;
 import com.app.weightalysis.data_storage.accessor.WeightAccessor;
-import com.app.weightalysis.data_storage.model.UserBean;
+import com.app.weightalysis.data_storage.model.WeightBean;
 import com.app.weightalysis.data_storage.schema.WeightSchemaBuilder;
 import com.app.weightalysis.logger.Logger;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
-import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
@@ -33,7 +30,7 @@ public class StandardGraphContract implements GraphContract {
 
     private static final String TAG = StandardGraphContract.class.getSimpleName();
     private GraphDataStorageContract graphDataStorageContract;
-    private ArrayList<UserBean> userBeanArrayList;
+    private ArrayList<WeightBean> weightBeanArrayList;
     private Context context;
 
     public StandardGraphContract(Context context) {
@@ -50,10 +47,10 @@ public class StandardGraphContract implements GraphContract {
         Logger.putInDebugLog(TAG, "Month : " + month, " Year : " + year);
 
         Cursor cursor = getDayCursor(monthInInteger, Integer.parseInt(year));
-        userBeanArrayList = getUserBeanArrayList(cursor);
+        weightBeanArrayList = getUserBeanArrayList(cursor);
 
-        CustomDataPoint[] customDataPoint = new CustomDataPoint[userBeanArrayList.size()];
-        customDataPoint = initializeDataPointsFromList(customDataPoint, userBeanArrayList, GraphType.DAY);
+        CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
+        customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.DAY);
         LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
         PointsGraphSeries<CustomDataPoint> pointLineGraphSeries = new PointsGraphSeries<>(customDataPoint);
 
@@ -84,61 +81,16 @@ public class StandardGraphContract implements GraphContract {
         graphView.removeAllSeries();
         graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter());
 
-        GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
-        //userBeanArrayList = getUserBeanArrayList();
-        LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(1, 45),
-                new DataPoint(2, 50),
-                new DataPoint(3, 60),
-                new DataPoint(4, 80)
-        });
-        PointsGraphSeries<DataPoint> pointLineGraphSeries = new PointsGraphSeries<>(new DataPoint[]{
-                new DataPoint(1, 45),
-                new DataPoint(2, 50),
-                new DataPoint(3, 60),
-                new DataPoint(4, 80)
-        });
-        graphView.addSeries(lineGraphSeries);
-        graphView.addSeries(pointLineGraphSeries);
+        int monthInInteger = new MonthInterpreter().getMonthInNumber(month);
+        Logger.putInDebugLog(TAG, "Month : " + monthInInteger, " Year : " + year);
 
-        //X-AXIS
-        graphView.getViewport().setXAxisBoundsManual(true);
-        //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(4);
-        graphView.getViewport().setMinX(1);
-        //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
-        graphView.getViewport().setMaxX(4);
+        weightBeanArrayList = getWeekDataPoint(monthInInteger, Integer.parseInt(year));
+        Logger.putInDebugLog(TAG, "weightBeanArrayList.size()", "" + weightBeanArrayList.size());
 
-        //settings
-        graphView.getViewport().setScrollable(true);
-        graphView.setTitle("Weekly Weight Chart");
-        gridLabel.setVerticalAxisTitle("Weight");
-        gridLabel.setHorizontalAxisTitle("Weeks");
-        gridLabel.setGridStyle(GridLabelRenderer.GridStyle.BOTH);
-        gridLabel.setGridColor(context.getResources().getColor(R.color.navy_blue_light));
-
-        //Label rendering
-        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
-        staticLabelsFormatter.setHorizontalLabels(new String[]{"week1", "week2", "week3", "week4"});
-        staticLabelsFormatter.setVerticalLabels(new String[]{"40", "50", "60", "70", "80", "90"});
-        graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-        graphView.setVisibility(View.VISIBLE);
-
-    }
-
-    @Override
-    public void drawGraphByMonth(GraphView graphView, String year) {
-        //reseting graph
-        graphView.removeAllSeries();
-        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter());
-
-        Logger.putInDebugLog(TAG, " Year : ", year);
-        userBeanArrayList = getMonthDataPoint(Integer.parseInt(year));
-
-        CustomDataPoint[] customDataPoint = new CustomDataPoint[userBeanArrayList.size()];
-        customDataPoint = initializeDataPointsFromList(customDataPoint, userBeanArrayList, GraphType.MONTH);
+        CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
+        customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.WEEK);
         LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
-        PointsGraphSeries<CustomDataPoint> barGraphSeries = new PointsGraphSeries<>(customDataPoint);
+        PointsGraphSeries<CustomDataPoint> pointsGraphSeries = new PointsGraphSeries<>(customDataPoint);
 
         GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
 //        graphView.setTitle("Monthly Weight Chart");
@@ -156,66 +108,101 @@ public class StandardGraphContract implements GraphContract {
         //X-AXIS
         graphView.getViewport().setXAxisBoundsManual(true);
         //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(6);
+        graphView.getGridLabelRenderer().setNumHorizontalLabels(4);
         graphView.getViewport().setMinX(1);
         //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
-        graphView.getViewport().setMaxX(6);
+        graphView.getViewport().setMaxX(4);
         graphView.addSeries(lineGraphSeries);
-        graphView.addSeries(barGraphSeries);
+        graphView.addSeries(pointsGraphSeries);
         graphView.setVisibility(View.VISIBLE);
 
     }
 
     @Override
-    public ArrayList<UserBean> getUserBeanArrayList(Cursor cursor) {
+    public void drawGraphByMonth(GraphView graphView, String year) {
+        //reseting graph
+        graphView.removeAllSeries();
+        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter());
+
+        Logger.putInDebugLog(TAG, " Year : ", year);
+        weightBeanArrayList = getMonthDataPoint(Integer.parseInt(year));
+
+        CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
+        customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.MONTH);
+        LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
+        PointsGraphSeries<CustomDataPoint> pointsGraphSeries = new PointsGraphSeries<>(customDataPoint);
+
+        GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
+//        graphView.setTitle("Monthly Weight Chart");
+        graphView.getViewport().setScrollable(true);
+//        gridLabel.setVerticalAxisTitle("Weight");
+//        gridLabel.setHorizontalAxisTitle("Months");
+        gridLabel.setGridStyle(GridLabelRenderer.GridStyle.BOTH);
+        gridLabel.setGridColor(context.getResources().getColor(R.color.navy_blue_light));
+
+        //X-AXIS
+        graphView.getViewport().setXAxisBoundsManual(true);
+        //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
+        graphView.getGridLabelRenderer().setNumHorizontalLabels(6);
+        graphView.getViewport().setMinX(1);
+        //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
+        graphView.getViewport().setMaxX(6);
+        graphView.addSeries(lineGraphSeries);
+        graphView.addSeries(pointsGraphSeries);
+        graphView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public ArrayList<WeightBean> getUserBeanArrayList(Cursor cursor) {
         Logger.putInDebugLog(TAG, "Inside", "getUserBeanArrayList");
-        userBeanArrayList = new ArrayList<>();
+        weightBeanArrayList = new ArrayList<>();
         Logger.putInDebugLog(TAG, "cursor.getCount() : ", "" + cursor.getCount() + " -null");
         if (cursor != null && cursor.getCount() > 0) {
             Logger.putInDebugLog(TAG, "Inside", "if - cursor");
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 Logger.putInDebugLog(TAG, "Inside", "while - cursor");
-                UserBean userBean = createUserFromCursor(cursor);
-                userBeanArrayList.add(userBean);
+                WeightBean weightBean = createUserFromCursor(cursor);
+                weightBeanArrayList.add(weightBean);
                 cursor.moveToNext();
             }
             cursor.close();
         }
-        return userBeanArrayList;
+        return weightBeanArrayList;
     }
 
     @Override
-    public UserBean createUserFromCursor(Cursor cursor) {
+    public WeightBean createUserFromCursor(Cursor cursor) {
         Logger.putInDebugLog(TAG, "Inside", "createUserFromCursor");
-        UserBean userBean = new UserBean();
+        WeightBean weightBean = new WeightBean();
         int weight = cursor.getInt(cursor.getColumnIndex(WeightAccessor.WEIGHT));
         int date = cursor.getInt(cursor.getColumnIndex(WeightAccessor.DATE));
         int month = cursor.getInt(cursor.getColumnIndex(WeightAccessor.MONTH));
         int year = cursor.getInt(cursor.getColumnIndex(WeightAccessor.YEAR));
         Logger.putInDebugLog(TAG, "Weight : " + weight + " -  null", " Date : " + date + " - null");
         Logger.putInDebugLog(TAG, "Weight : " + weight + " -  null", " Month : " + month + " - null");
-        userBean.setWeight(weight);
-        userBean.setDate(date);
-        userBean.setMonth(month);
-        userBean.setYear(year);
-        return userBean;
+        weightBean.setWeight(weight);
+        weightBean.setDate(date);
+        weightBean.setMonth(month);
+        weightBean.setYear(year);
+        return weightBean;
     }
 
     @Override
-    public CustomDataPoint[] initializeDataPointsFromList(CustomDataPoint[] dataPoint, ArrayList<UserBean> userBeanArrayList, GraphType graphType) {
+    public CustomDataPoint[] initializeDataPointsFromList(CustomDataPoint[] dataPoint, ArrayList<WeightBean> weightBeanArrayList, GraphType graphType) {
         int index = 0;
         if (graphType.equals(GraphType.DAY)) {
-            for (UserBean userBean : userBeanArrayList) {
-                dataPoint[index++] = new CustomDataPoint(userBean.getDate(), userBean.getWeight());
+            for (WeightBean weightBean : weightBeanArrayList) {
+                dataPoint[index++] = new CustomDataPoint(weightBean.getDate(), weightBean.getWeight());
             }
         } else if (graphType.equals(GraphType.WEEK)) {
-            for (UserBean userBean : userBeanArrayList) {
-                dataPoint[index++] = new CustomDataPoint(userBean.getYear(), userBean.getWeight());
+            int i = 1;
+            for (WeightBean weightBean : weightBeanArrayList) {
+                dataPoint[index++] = new CustomDataPoint(i++, weightBean.getWeight());
             }
         } else if (graphType.equals(GraphType.MONTH)) {
-            for (UserBean userBean : userBeanArrayList) {
-                dataPoint[index++] = new CustomDataPoint(userBean.getMonth(), userBean.getWeight());
+            for (WeightBean weightBean : weightBeanArrayList) {
+                dataPoint[index++] = new CustomDataPoint(weightBean.getMonth(), weightBean.getWeight());
             }
         }
         return dataPoint;
@@ -231,10 +218,83 @@ public class StandardGraphContract implements GraphContract {
     }
 
     @Override
-    public Cursor getWeekCursor(int month, int year) {
+    public Cursor getWeek1Cursor(int month) {
         graphDataStorageContract = new GraphDataDataStorageProvider();
-        Cursor cursor = graphDataStorageContract.queryForSelectedCols(WeightSchemaBuilder.TABLE_NAME, WeightAccessor.getTableProjection(), WeightAccessor.MONTH, WeightAccessor.YEAR, month, year);
+        Cursor cursor = graphDataStorageContract.queryForWeek1(WeightSchemaBuilder.TABLE_NAME, WeightAccessor.getTableProjection(), WeightAccessor.MONTH, month);
         return cursor;
+    }
+
+    @Override
+    public Cursor getWeek2and3Cursor(int month, int date1, int date2) {
+        graphDataStorageContract = new GraphDataDataStorageProvider();
+        Cursor cursor = graphDataStorageContract.queryForWeek2and3(WeightSchemaBuilder.TABLE_NAME, WeightAccessor.getTableProjection(), WeightAccessor.MONTH, month, date1, date2);
+        return cursor;
+    }
+
+    @Override
+    public Cursor getWeek4Cursor(int month) {
+        graphDataStorageContract = new GraphDataDataStorageProvider();
+        Cursor cursor = graphDataStorageContract.queryForWeek4(WeightSchemaBuilder.TABLE_NAME, WeightAccessor.getTableProjection(), WeightAccessor.MONTH, month);
+        return cursor;
+    }
+
+    public ArrayList<WeightBean> getWeekDataPoint(int monthInInteger, int year) {
+        Logger.putInDebugLog(TAG, "Inside", "getWeekDataPoint");
+        ArrayList<WeightBean> weightBeanArrayList = new ArrayList<>();
+        WeightBean weightBean = null;
+        Cursor cursor = null;
+
+        //week1
+        cursor = getWeek1Cursor(monthInInteger);
+        weightBean = getWeeklyBean(cursor, monthInInteger);
+        weightBeanArrayList.add(weightBean);
+
+        //week2
+        cursor = getWeek2and3Cursor(monthInInteger, 8, 14);
+        weightBean = getWeeklyBean(cursor, monthInInteger);
+        weightBeanArrayList.add(weightBean);
+
+
+        //week3
+        cursor = getWeek2and3Cursor(monthInInteger, 15, 21);
+        weightBean = getWeeklyBean(cursor, monthInInteger);
+        weightBeanArrayList.add(weightBean);
+
+
+        //week4
+        cursor = getWeek4Cursor(monthInInteger);
+        weightBean = getWeeklyBean(cursor, monthInInteger);
+        weightBeanArrayList.add(weightBean);
+
+        return weightBeanArrayList;
+    }
+
+    private WeightBean getWeeklyBean(Cursor cursor, int monthInInteger) {
+        Logger.putInDebugLog(TAG, "Inside : ", "getWeeklyBean");
+        Logger.putInDebugLog(TAG, "month : ", "" + monthInInteger);
+        WeightBean weightBean = new WeightBean();
+        int totalWeight = 0;
+        int cursorCount = 0;
+        Logger.putInDebugLog(TAG, "cursor before if : ", "" + cursor + " null");
+        Logger.putInDebugLog(TAG, "cursor before if : cursorCount", "" + cursor.getCount());
+        if (cursor != null && cursor.getCount() > 0) {
+            Logger.putInDebugLog(TAG, "Inside", "if");
+            cursorCount = cursor.getCount();
+            Logger.putInDebugLog(TAG, "cursorCount", "" + cursorCount);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Logger.putInDebugLog(TAG, "Inside", "while");
+                Logger.putInDebugLog(TAG, "Inside while - weight :", "" + Integer.parseInt(cursor.getString(cursor.getColumnIndex(WeightAccessor.WEIGHT))) + " null");
+                totalWeight += Integer.parseInt(cursor.getString(cursor.getColumnIndex(WeightAccessor.WEIGHT)));
+                Logger.putInDebugLog(TAG, "totalWeight :", "" + totalWeight + " null");
+                cursor.moveToNext();
+            }
+            cursor.close();
+            weightBean = new WeightBean();
+            Logger.putInDebugLog(TAG, "avgWeight : ", String.valueOf(getAvgWeight(totalWeight, cursorCount)));
+            weightBean.setWeight(getAvgWeight(totalWeight, cursorCount));
+        }
+        return weightBean;
     }
 
     @Override
@@ -246,10 +306,10 @@ public class StandardGraphContract implements GraphContract {
     }
 
     @Override
-    public ArrayList<UserBean> getMonthDataPoint(int year) {
+    public ArrayList<WeightBean> getMonthDataPoint(int year) {
         Logger.putInDebugLog(TAG, "Inside", "getMonthDataPoint");
-        ArrayList<UserBean> userBeanArrayList = new ArrayList<>();
-        UserBean userBean = null;
+        ArrayList<WeightBean> weightBeanArrayList = new ArrayList<>();
+        WeightBean weightBean = null;
         int month = 0;
         int totalWeight = 0;
         int cursorCount = 0;
@@ -274,19 +334,19 @@ public class StandardGraphContract implements GraphContract {
                     cursor.moveToNext();
                 }
                 cursor.close();
-                userBean = new UserBean();
+                weightBean = new WeightBean();
                 Logger.putInDebugLog(TAG, "month : ", "" + month);
-                userBean.setMonth(month);
-                Logger.putInDebugLog(TAG, "avgWeight : ", String.valueOf(getMonthAvgWeight(totalWeight, cursorCount)));
-                userBean.setWeight(getMonthAvgWeight(totalWeight, cursorCount));
-                userBeanArrayList.add(userBean);
+                weightBean.setMonth(month);
+                Logger.putInDebugLog(TAG, "avgWeight : ", String.valueOf(getAvgWeight(totalWeight, cursorCount)));
+                weightBean.setWeight(getAvgWeight(totalWeight, cursorCount));
+                weightBeanArrayList.add(weightBean);
             }
         }
-        return userBeanArrayList;
+        return weightBeanArrayList;
     }
 
     @Override
-    public int getMonthAvgWeight(int totalWeight, int count) {
+    public int getAvgWeight(int totalWeight, int count) {
         Logger.putInDebugLog(TAG, "totalWeight :" + totalWeight, " count : " + count + " null");
         int avgWeight = 0;
         avgWeight = (totalWeight / count);

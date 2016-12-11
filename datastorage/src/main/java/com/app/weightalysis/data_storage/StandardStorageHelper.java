@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.app.weightalysis.data_storage.accessor.WeightAccessor;
+
 /**
  * Created by Aakash Singh on 24-11-2016.
  */
@@ -77,6 +79,37 @@ public class StandardStorageHelper implements StorageHelper {
         Cursor cursor = db.query(tableName, columns, whereClause, whereArgs, null, null, null);
         return cursor;
     }
+
+    @Override
+    public Cursor queryForWeek1(String tableName, String[] columns, String whereCol1, int arg1) {
+        SQLiteDatabase db = this.primaryDBProvider.getWritableDatabase();
+        String whereClause = WeightAccessor.DATE + "<=7 and " + whereCol1 + "=?";
+        String[] whereArgs = {String.valueOf(arg1)};
+        //db.update(String table, ContentValues values, String whereClause, String[] whereArgs);
+        Cursor cursor = db.query(tableName, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    @Override
+    public Cursor queryForWeek2and3(String tableName, String[] columns, String whereCol1, int arg1, int arg2, int arg3) {
+        SQLiteDatabase db = this.primaryDBProvider.getWritableDatabase();
+        String whereClause = WeightAccessor.DATE + ">=? and " + WeightAccessor.DATE + "<=? and " + whereCol1 + "=?";
+        String[] whereArgs = {String.valueOf(arg2), String.valueOf(arg3), String.valueOf(arg1)};
+        //db.update(String table, ContentValues values, String whereClause, String[] whereArgs);
+        Cursor cursor = db.query(tableName, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    @Override
+    public Cursor queryForWeek4(String tableName, String[] columns, String whereCol1, int arg1) {
+        SQLiteDatabase db = this.primaryDBProvider.getWritableDatabase();
+        String whereClause = WeightAccessor.DATE + ">21 and " + whereCol1 + "=?";
+        String[] whereArgs = {String.valueOf(arg1)};
+        //db.update(String table, ContentValues values, String whereClause, String[] whereArgs);
+        Cursor cursor = db.query(tableName, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
 
     @Override
     public int deleteFromDB() {
