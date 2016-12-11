@@ -6,6 +6,21 @@
     <color name="accent">#FF5252</color>
     <!--<color name="accent_too_old">#00BCD4</color>-->
 
+    <color name="primary_old">#1fb58f</color>
+    <color name="primary_dark_old">#198e71</color>
+    <color name="accent_old3">#808080</color>
+    <color name="accent_old">#FF5252</color>
+    <color name="accent_old_2">#FEA680</color>
+    <color name="buttonColor_new">#F53240</color>
+
+    <color name="available_color">#6fdc6f</color>
+    <color name="not_available_color">#ff4c4c</color>
+
+    <color name="button_pressed">#ff8a00</color>
+    <color name="button_focused">#ff8a00</color>
+    <color name="button_default">#1c76bb</color>
+
+    <color name="tree_green">#47b51f</color>
     <color name="aqua">#6bbaa7</color>
     <color name="coral">#F53240</color>
     <color name="golden">#F9bE02</color>
@@ -46,11 +61,14 @@
     <color name="low_green_color">#80cbc4</color>
     <color name="low_orange_color">#ffcdd2</color>
     <color name="low_grey_color">#cfd8dc</color>
-    <color name="high_grey_color">#F44336</color>
+    <color name="low_grey_color_new">#F0F0F0</color>
+    <color name="high_orange_color">#F44336</color>
     <color name="light_black">#212121</color>
 
     <color name="white">@android:color/white</color>
     <color name="black">@android:color/black</color>
+    <color name="black_light_1">#202020</color>
+    <color name="black_light_2">#909090</color>
     <color name="chat_user_reply_background_color">#c8f0ff</color>
     <color name="chat_company_reply_background_color">#F5F5F5</color>
     <color name="gray">@android:color/darker_gray</color>

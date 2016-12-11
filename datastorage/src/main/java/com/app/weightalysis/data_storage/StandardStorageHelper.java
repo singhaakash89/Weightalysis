@@ -59,6 +59,26 @@ public class StandardStorageHelper implements StorageHelper {
     }
 
     @Override
+    public Cursor queryForSelectedCol(String tableName, String[] columns, String whereCol, int arg1) {
+        SQLiteDatabase db = this.primaryDBProvider.getWritableDatabase();
+        String whereClause = whereCol + " = ?";
+        String[] whereArgs = {String.valueOf(arg1)};
+        //db.update(String table, ContentValues values, String whereClause, String[] whereArgs);
+        Cursor cursor = db.query(tableName, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    @Override
+    public Cursor queryForSelectedCols(String tableName, String[] columns, String whereCol1, String whereCol2, int arg1, int arg2) {
+        SQLiteDatabase db = this.primaryDBProvider.getWritableDatabase();
+        String whereClause = whereCol1 + "=? and " + whereCol2 + "=?";
+        String[] whereArgs = {String.valueOf(arg1), String.valueOf(arg2)};
+        //db.update(String table, ContentValues values, String whereClause, String[] whereArgs);
+        Cursor cursor = db.query(tableName, columns, whereClause, whereArgs, null, null, null);
+        return cursor;
+    }
+
+    @Override
     public int deleteFromDB() {
         return 0;
     }

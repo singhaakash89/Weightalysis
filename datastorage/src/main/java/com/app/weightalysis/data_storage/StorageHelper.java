@@ -15,6 +15,10 @@ public interface StorageHelper {
 
     public Cursor queryFromDB(String tableName, String[] columns);
 
+    public Cursor queryForSelectedCol(String tableName, String[] columns, String whereCol, int arg1);
+
+    public Cursor queryForSelectedCols(String tableName, String[] columns, String whereCol1, String whereCol2, int arg1, int arg2);
+
     public int deleteFromDB();
 
 }

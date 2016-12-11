@@ -2,6 +2,8 @@ package com.app.weightalysis.oneui.activities;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,14 +21,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.app.graph.GraphContract;
 import com.app.graph.StandardGraphContract;
 import com.app.graph.data_storage.GraphDataDataStorageProvider;
 import com.app.graph.data_storage.GraphDataStorageContract;
+import com.app.graph.model.Week;
 import com.app.weightalysis.logger.Logger;
 import com.app.weightalysis.oneui.R;
+import com.app.weightalysis.oneui.fragments.DayFragment;
+import com.app.weightalysis.oneui.fragments.HomeFragment;
+import com.app.weightalysis.oneui.fragments.MonthFragment;
+import com.app.weightalysis.oneui.fragments.WeekFragment;
 import com.app.weightalysis.oneui.toast_manager.ToastManager;
 import com.jjoe64.graphview.GraphView;
 
@@ -35,10 +43,13 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class BaseActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, BaseActivityViewContract {
 
     private static String TAG = BaseActivity.class.getSimpleName();
-    private Context context;
+    private static final int EXIT_TIME_OUT = 2000;
+    private static final int TRANSITION_INTERVAL = 500;
+    private int backPressCount = 0;
+    private static Context mContext;
     private DatePickerDialog datePickerDialog;
     private TextView dateTV;
     private EditText weightET;
@@ -47,19 +58,35 @@ public class BaseActivity extends AppCompatActivity
     private GraphDataStorageContract graphDataStorageContract;
     private String dateString;
     private GraphView graphView;
-    private static final int EXIT_TIME_OUT = 2000;
-    private int backPressCount = 0;
+    private Toolbar toolbar;
+    private FragmentTransaction fragmentTransaction;
+    private FragmentManager fragmentManager;
+    private BaseActivityViewPresenter baseActivityPresenter;
+    private HomeFragment homeFragment;
+    private DayFragment dayFragment;
+    private WeekFragment weekFragment;
+    private MonthFragment monthFragment;
+    private TextView titleTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        context = this;
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        setTitle("Weight-alysis");
+        this.mContext = this;
+        fragmentManager = getFragmentManager();
         graphContract = new StandardGraphContract(this);
+        baseActivityPresenter = new BaseActivityViewPresenter(this);
+        homeFragment = new HomeFragment();
+        dayFragment = new DayFragment();
+        weekFragment = new WeekFragment();
+        monthFragment = new MonthFragment();
+        setContentView(R.layout.activity_main);
 
+        //Appbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        titleTextView = (TextView) toolbar.findViewById(R.id.titleAppBar);
+        setSupportActionBar(toolbar);
+
+        //floating button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,17 +95,26 @@ public class BaseActivity extends AppCompatActivity
             }
         });
 
+        //drawer layout
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        //listener for nav bar
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         //for making icons colored in nav drawer
         navigationView.setItemIconTintList(null);
 
+        //by default inflating for every time app starts
+        inflateHomeFragment();
+    }
+
+
+    public static Context getContext() {
+        return mContext;
     }
 
     @Override
@@ -95,14 +131,15 @@ public class BaseActivity extends AppCompatActivity
             } else if (backPressCount == 2) {
                 BaseActivity.this.finish();
             }
-
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     backPressCount = 0;
                 }
             }, EXIT_TIME_OUT);
+
         }
+
     }
 
     @Override
@@ -134,21 +171,16 @@ public class BaseActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            baseActivityPresenter.inflateHomeFragment();
             ToastManager.getInstance().showSimpleToastShort("Home is selected");
         } else if (id == R.id.nav_graph_date) {
-            graphView = (GraphView) findViewById(R.id.graph_new);
-            graphView.setVisibility(View.INVISIBLE);
-            graphContract.drawGraphByDate(graphView);
+            baseActivityPresenter.inflateDayFragment();
             ToastManager.getInstance().showSimpleToastShort("Daily GraphContract is selected");
         } else if (id == R.id.nav_graph_week) {
-            graphView = (GraphView) findViewById(R.id.graph_new);
-            graphView.setVisibility(View.INVISIBLE);
-            graphContract.drawGraphByWeek(graphView);
+            baseActivityPresenter.inflateWeekFragment();
             ToastManager.getInstance().showSimpleToastShort("Weekly GraphContract is selected");
         } else if (id == R.id.nav_graph_month) {
-            graphView = (GraphView) findViewById(R.id.graph_new);
-            graphView.setVisibility(View.INVISIBLE);
-            graphContract.drawGraphByMonth(graphView);
+            baseActivityPresenter.inflateMonthFragment();
             ToastManager.getInstance().showSimpleToastShort("Monthly GraphContract is selected");
         }
 
@@ -177,15 +209,15 @@ public class BaseActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                graphView = (GraphView) findViewById(R.id.graph_new);
-                graphView.setVisibility(View.INVISIBLE);
+//                graphView = (GraphView) findViewById(R.id.graph_new);
+//                graphView.setVisibility(View.INVISIBLE);
                 if (null != dateString) {
                     String[] str = dateString.split("-");
                     for (String s : str) {
                         Logger.putInDebugLog(TAG, s, "");
                     }
                     graphDataStorageContract = new GraphDataDataStorageProvider();
-                    long id = graphDataStorageContract.insertData(weightET.getText().toString(), str[0], str[1], str[2]);
+                    long id = graphDataStorageContract.insertData(Integer.parseInt(weightET.getText().toString()), Integer.parseInt(str[0]), Integer.parseInt(str[1]), Integer.parseInt(str[2]));
                     ToastManager.getInstance().showSimpleToastShort("row stored at : " + id + " position");
                 }
             }
@@ -207,5 +239,58 @@ public class BaseActivity extends AppCompatActivity
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
         datePickerDialog.show();
+    }
+
+    @Override
+    public void inflateHomeFragment() {
+        titleTextView.setText("Home");
+        fragmentTransaction = fragmentManager.beginTransaction();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fragmentTransaction.replace(R.id.content_main, homeFragment, "homeFragment");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        }, TRANSITION_INTERVAL);
+    }
+
+    @Override
+    public void inflateDayFragment() {
+        titleTextView.setText("Daily Graph");
+        fragmentTransaction = fragmentManager.beginTransaction();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fragmentTransaction.replace(R.id.content_main, dayFragment, "dayFragment");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        }, TRANSITION_INTERVAL);
+    }
+
+
+    @Override
+    public void inflateWeekFragment() {
+        titleTextView.setText("Weekly Graph");
+        fragmentTransaction = fragmentManager.beginTransaction();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fragmentTransaction.replace(R.id.content_main, weekFragment, "weekFragment");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        }, TRANSITION_INTERVAL);
+    }
+
+    @Override
+    public void inflateMonthFragment() {
+        titleTextView.setText("Monthly Graph");
+        fragmentTransaction = fragmentManager.beginTransaction();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fragmentTransaction.replace(R.id.content_main, monthFragment, "monthFragment");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        }, TRANSITION_INTERVAL);
     }
 }

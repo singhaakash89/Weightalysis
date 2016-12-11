@@ -8,7 +8,11 @@ import android.database.Cursor;
 
 public interface GraphDataStorageContract {
 
-    long insertData(String weight, String date, String month, String week);
+    public long insertData(int weight, int date, int month, int year);
 
     Cursor queryData();
+
+    Cursor queryForSelectedCol(String tableName, String[] columns, String whereCol, int arg1);
+
+    Cursor queryForSelectedCols(String tableName, String[] columns, String whereCol1, String whereCol2, int arg1, int arg2);
 }

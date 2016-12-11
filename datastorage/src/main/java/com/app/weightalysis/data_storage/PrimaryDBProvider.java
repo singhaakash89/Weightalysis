@@ -15,7 +15,7 @@ import com.app.weightalysis.logger.Logger;
 public class PrimaryDBProvider extends SQLiteOpenHelper {
     private final String TAG = PrimaryDBProvider.class.getSimpleName();
     private static final String DATABASE_NAME = "WeightalysisDatabase";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 12;
     private static PrimaryDBProvider primaryDBProvider;
 
     private PrimaryDBProvider(Context context) {

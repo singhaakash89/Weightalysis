@@ -9,49 +9,49 @@ import com.app.weightalysis.data_storage.accessor.WeightAccessor;
  */
 
 public class UserBean {
-    private String weight;
-    private String date;
-    private String week;
-    private String month;
+    private int weight;
+    private int date;
+    private int month;
+    private int year;
 
-    public String getWeight() {
+    public int getWeight() {
         return weight;
     }
 
-    public void setWeight(String weight) {
+    public void setWeight(int weight) {
         this.weight = weight;
     }
 
-    public String getDate() {
+    public int getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(int date) {
         this.date = date;
     }
 
-    public String getMonth() {
+    public int getMonth() {
         return month;
     }
 
-    public void setMonth(String month) {
+    public void setMonth(int month) {
         this.month = month;
     }
 
-    public String getWeek() {
-        return week;
+    public int getYear() {
+        return year;
     }
 
-    public void setWeek(String week) {
-        this.week = week;
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public ContentValues getContentValues() {
         ContentValues row = new ContentValues();
         row.put(WeightAccessor.WEIGHT, getWeight());
         row.put(WeightAccessor.DATE, getDate());
-        row.put(WeightAccessor.WEEK, getWeek());
         row.put(WeightAccessor.MONTH, getMonth());
+        row.put(WeightAccessor.YEAR, getYear());
         return row;
     }
 

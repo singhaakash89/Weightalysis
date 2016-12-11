@@ -16,6 +16,15 @@
         app:theme="@style/MyCustomToolbarTheme">
 
         <!--Can keepp text view -->
+        <TextView
+            android:id="@+id/titleAppBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Tittle"
+            android:textColor="@color/text_color_light"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"/>
 
         <!--can keep imageview-->
 
