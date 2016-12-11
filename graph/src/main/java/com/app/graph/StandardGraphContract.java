@@ -9,6 +9,7 @@ import com.app.graph.data_storage.GraphDataStorageContract;
 import com.app.graph.inheritance.CustomDataPoint;
 import com.app.graph.interpreter.MonthInterpreter;
 import com.app.graph.model.GraphType;
+import com.app.graph.toast_manager.ToastManager;
 import com.app.weightalysis.data_storage.accessor.WeightAccessor;
 import com.app.weightalysis.data_storage.model.WeightBean;
 import com.app.weightalysis.data_storage.schema.WeightSchemaBuilder;
@@ -35,6 +36,7 @@ public class StandardGraphContract implements GraphContract {
 
     public StandardGraphContract(Context context) {
         this.context = context;
+        ToastManager.createInstance(context);
     }
 
     @Override
@@ -49,30 +51,33 @@ public class StandardGraphContract implements GraphContract {
         Cursor cursor = getDayCursor(monthInInteger, Integer.parseInt(year));
         weightBeanArrayList = getUserBeanArrayList(cursor);
 
-        CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
-        customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.DAY);
-        LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
-        PointsGraphSeries<CustomDataPoint> pointLineGraphSeries = new PointsGraphSeries<>(customDataPoint);
+        if (weightBeanArrayList.size() != 0) {
+            CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
+            customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.DAY);
+            LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
+            PointsGraphSeries<CustomDataPoint> pointLineGraphSeries = new PointsGraphSeries<>(customDataPoint);
 
 //        graphView.setTitle("Weight - Day Chart");
-        graphView.getViewport().setScrollable(true);
-        GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
+            graphView.getViewport().setScrollable(true);
+            GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
 //        gridLabel.setVerticalAxisTitle("Weight");
 //        gridLabel.setHorizontalAxisTitle("Day");
-        gridLabel.setGridStyle(GridLabelRenderer.GridStyle.BOTH);
-        gridLabel.setGridColor(context.getResources().getColor(R.color.navy_blue_light));
+            gridLabel.setGridStyle(GridLabelRenderer.GridStyle.BOTH);
+            gridLabel.setGridColor(context.getResources().getColor(R.color.navy_blue_light));
 
-        //X-AXIS
-        graphView.getViewport().setXAxisBoundsManual(true);
-        //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(6);
-        graphView.getViewport().setMinX(1);
-        //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
-        graphView.getViewport().setMaxX(6);
-        graphView.addSeries(lineGraphSeries);
-        graphView.addSeries(pointLineGraphSeries);
+            //X-AXIS
+            graphView.getViewport().setXAxisBoundsManual(true);
+            //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
+            graphView.getGridLabelRenderer().setNumHorizontalLabels(6);
+            graphView.getViewport().setMinX(1);
+            //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
+            graphView.getViewport().setMaxX(6);
+            graphView.addSeries(lineGraphSeries);
+            graphView.addSeries(pointLineGraphSeries);
+        } else {
+            ToastManager.getInstance().showSimpleToastShort("No Data Found");
+        }
         graphView.setVisibility(View.VISIBLE);
-
     }
 
     @Override
@@ -87,35 +92,38 @@ public class StandardGraphContract implements GraphContract {
         weightBeanArrayList = getWeekDataPoint(monthInInteger, Integer.parseInt(year));
         Logger.putInDebugLog(TAG, "weightBeanArrayList.size()", "" + weightBeanArrayList.size());
 
-        CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
-        customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.WEEK);
-        LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
-        PointsGraphSeries<CustomDataPoint> pointsGraphSeries = new PointsGraphSeries<>(customDataPoint);
+        if (weightBeanArrayList.get(0).getWeight() != 0) {
+            CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
+            customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.WEEK);
+            LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
+            PointsGraphSeries<CustomDataPoint> pointsGraphSeries = new PointsGraphSeries<>(customDataPoint);
 
-        GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
+            GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
 //        graphView.setTitle("Monthly Weight Chart");
-        graphView.getViewport().setScrollable(true);
+            graphView.getViewport().setScrollable(true);
 //        gridLabel.setVerticalAxisTitle("Weight");
 //        gridLabel.setHorizontalAxisTitle("Months");
-        gridLabel.setGridStyle(GridLabelRenderer.GridStyle.BOTH);
-        gridLabel.setGridColor(context.getResources().getColor(R.color.navy_blue_light));
+            gridLabel.setGridStyle(GridLabelRenderer.GridStyle.BOTH);
+            gridLabel.setGridColor(context.getResources().getColor(R.color.navy_blue_light));
 
 //        //Label rendering
 //        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graphView);
 //        staticLabelsFormatter.setHorizontalLabels(new String[]{"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"});
 //        graphView.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
-        //X-AXIS
-        graphView.getViewport().setXAxisBoundsManual(true);
-        //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(4);
-        graphView.getViewport().setMinX(1);
-        //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
-        graphView.getViewport().setMaxX(4);
-        graphView.addSeries(lineGraphSeries);
-        graphView.addSeries(pointsGraphSeries);
+            //X-AXIS
+            graphView.getViewport().setXAxisBoundsManual(true);
+            //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
+            graphView.getGridLabelRenderer().setNumHorizontalLabels(4);
+            graphView.getViewport().setMinX(1);
+            //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
+            graphView.getViewport().setMaxX(4);
+            graphView.addSeries(lineGraphSeries);
+            graphView.addSeries(pointsGraphSeries);
+        } else {
+            ToastManager.getInstance().showSimpleToastShort("No Data Found");
+        }
         graphView.setVisibility(View.VISIBLE);
-
     }
 
     @Override
@@ -127,28 +135,32 @@ public class StandardGraphContract implements GraphContract {
         Logger.putInDebugLog(TAG, " Year : ", year);
         weightBeanArrayList = getMonthDataPoint(Integer.parseInt(year));
 
-        CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
-        customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.MONTH);
-        LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
-        PointsGraphSeries<CustomDataPoint> pointsGraphSeries = new PointsGraphSeries<>(customDataPoint);
+        if (weightBeanArrayList.size() != 0) {
+            CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
+            customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.MONTH);
+            LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
+            PointsGraphSeries<CustomDataPoint> pointsGraphSeries = new PointsGraphSeries<>(customDataPoint);
 
-        GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
+            GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
 //        graphView.setTitle("Monthly Weight Chart");
-        graphView.getViewport().setScrollable(true);
+            graphView.getViewport().setScrollable(true);
 //        gridLabel.setVerticalAxisTitle("Weight");
 //        gridLabel.setHorizontalAxisTitle("Months");
-        gridLabel.setGridStyle(GridLabelRenderer.GridStyle.BOTH);
-        gridLabel.setGridColor(context.getResources().getColor(R.color.navy_blue_light));
+            gridLabel.setGridStyle(GridLabelRenderer.GridStyle.BOTH);
+            gridLabel.setGridColor(context.getResources().getColor(R.color.navy_blue_light));
 
-        //X-AXIS
-        graphView.getViewport().setXAxisBoundsManual(true);
-        //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(6);
-        graphView.getViewport().setMinX(1);
-        //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
-        graphView.getViewport().setMaxX(6);
-        graphView.addSeries(lineGraphSeries);
-        graphView.addSeries(pointsGraphSeries);
+            //X-AXIS
+            graphView.getViewport().setXAxisBoundsManual(true);
+            //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
+            graphView.getGridLabelRenderer().setNumHorizontalLabels(6);
+            graphView.getViewport().setMinX(1);
+            //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
+            graphView.getViewport().setMaxX(6);
+            graphView.addSeries(lineGraphSeries);
+            graphView.addSeries(pointsGraphSeries);
+        } else {
+            ToastManager.getInstance().showSimpleToastShort("No Data Found");
+        }
         graphView.setVisibility(View.VISIBLE);
     }
 

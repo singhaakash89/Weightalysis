@@ -20,7 +20,7 @@ import com.app.weightalysis.oneui.R;
  */
 public class SplashActivity extends AppCompatActivity {
 
-    private boolean isAlreadyRegistered;
+    private boolean isAlreadyRegistered = false;
     private Context mContext;
     private final static int SPLASH_TIME_OUT = 3000;
     private SharedPreferenceManager sharedPreferenceManager;
@@ -48,7 +48,7 @@ public class SplashActivity extends AppCompatActivity {
 //        actionBar.hide();
 //************************************************************
 
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_splash_new);
         //Setting opacity of textview-developer
         float alpha = 0.7f;
         ((TextView) findViewById(R.id.devInfo)).setAlpha(alpha);
@@ -67,8 +67,8 @@ public class SplashActivity extends AppCompatActivity {
 //        iv.setImageBitmap(bitmapScaled);
 //*******************************************************************
 
-        SharedPreferenceManager sharedPreferenceManager = new SharedPreferenceManager(this);
-        isAlreadyRegistered = sharedPreferenceManager.getBoolean("hasRegistered");
+        sharedPreferenceManager = SharedPreferenceManager.getInstance();
+        isAlreadyRegistered = sharedPreferenceManager.getBoolean(LoginActivity.IS_REGISTERED);
 
         new Handler().postDelayed(new Runnable() {
             /*
@@ -82,7 +82,7 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(intent);
                     SplashActivity.this.finish();
                 } else {
-                    Intent intent = new Intent(SplashActivity.this, BaseActivity.class);
+                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                     startActivity(intent);
                     SplashActivity.this.finish();
                 }

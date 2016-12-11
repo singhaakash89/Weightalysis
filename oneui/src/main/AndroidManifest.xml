@@ -10,6 +10,10 @@
             android:label=" "
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
+            android:name="com.app.weightalysis.oneui.activities.LoginActivity"
+            android:label=" "
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name="com.app.weightalysis.oneui.activities.SplashActivity"
             android:label=" "
             android:theme="@style/AppTheme.NoActionBar"

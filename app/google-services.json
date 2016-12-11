@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "336648795684",
+    "project_id": "weightalysis"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336648795684:android:f41686c8af80be4b",
+        "android_client_info": {
+          "package_name": "com.app.weightalysis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336648795684-hp5e7o3laif0m6g5e4k5ds1hcplvntoc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.weightalysis",
+            "certificate_hash": "E7AC327F91E783861B783DFF183E4947A73981BC"
+          }
+        },
+        {
+          "client_id": "336648795684-5cnbl869l0v4hhv7fl15i8mchdc0k0ru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwlK82FwhZHQP2p3FNYYTAa3e0SIpVmT8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ import com.app.graph.StandardGraphContract;
 import com.app.graph.data_storage.GraphDataDataStorageProvider;
 import com.app.graph.data_storage.GraphDataStorageContract;
 import com.app.graph.model.Week;
+import com.app.weightalysis.data_storage.SharedPreferenceManager;
 import com.app.weightalysis.logger.Logger;
 import com.app.weightalysis.oneui.R;
 import com.app.weightalysis.oneui.fragments.DayFragment;
@@ -67,6 +69,8 @@ public class BaseActivity extends AppCompatActivity
     private WeekFragment weekFragment;
     private MonthFragment monthFragment;
     private TextView titleTextView;
+    private TextView name, email;
+    private LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +112,16 @@ public class BaseActivity extends AppCompatActivity
         //for making icons colored in nav drawer
         navigationView.setItemIconTintList(null);
 
+        //setting username and email in Nav Drawer
+        View header = navigationView.getHeaderView(0);
+        name = (TextView) header.findViewById(R.id.userName);
+        email = (TextView) header.findViewById(R.id.userEmail);
+        Logger.putInDebugLog(TAG, "Name", name + " null");
+        Logger.putInDebugLog(TAG, "Email", email + " null");
+        name.setText(SharedPreferenceManager.getInstance().getString(LoginActivity.DISPLAY_NAME_KEY));
+        email.setText(SharedPreferenceManager.getInstance().getString(LoginActivity.EMAIL_KEY));
+
+
         //by default inflating for every time app starts
         inflateHomeFragment();
     }
@@ -123,23 +137,41 @@ public class BaseActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            Logger.putInDebugLog(TAG, "Inside", "onBackPressed : " + backPressCount);
             //Below code is for 2 second Pause for Exit Using HANDLER
             backPressCount++;
             if (backPressCount == 1) {
+                Logger.putInDebugLog(TAG, "Inside", "onBackPressed == 1 : " + backPressCount);
                 ToastManager.getInstance().showSimpleToastShort("Press again to Exit");
             } else if (backPressCount == 2) {
+                Logger.putInDebugLog(TAG, "Inside", "onBackPressed == 2: " + backPressCount);
                 BaseActivity.this.finish();
             }
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    Logger.putInDebugLog(TAG, "Inside", "run");
                     backPressCount = 0;
                 }
             }, EXIT_TIME_OUT);
 
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
     }
 
     @Override
@@ -170,18 +202,18 @@ public class BaseActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_home) {
+        if (id == R.id.nav_diary) {
             baseActivityPresenter.inflateHomeFragment();
-            ToastManager.getInstance().showSimpleToastShort("Home is selected");
+            ToastManager.getInstance().showSimpleToastShort("Diary is selected");
         } else if (id == R.id.nav_graph_date) {
             baseActivityPresenter.inflateDayFragment();
-            ToastManager.getInstance().showSimpleToastShort("Daily GraphContract is selected");
+            ToastManager.getInstance().showSimpleToastShort("Daily Graph is selected");
         } else if (id == R.id.nav_graph_week) {
             baseActivityPresenter.inflateWeekFragment();
-            ToastManager.getInstance().showSimpleToastShort("Weekly GraphContract is selected");
+            ToastManager.getInstance().showSimpleToastShort("Weekly Graph is selected");
         } else if (id == R.id.nav_graph_month) {
             baseActivityPresenter.inflateMonthFragment();
-            ToastManager.getInstance().showSimpleToastShort("Monthly GraphContract is selected");
+            ToastManager.getInstance().showSimpleToastShort("Monthly Graph is selected");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -243,7 +275,7 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public void inflateHomeFragment() {
-        titleTextView.setText("Home");
+        titleTextView.setText("Diary");
         fragmentTransaction = fragmentManager.beginTransaction();
         new Handler().postDelayed(new Runnable() {
             @Override

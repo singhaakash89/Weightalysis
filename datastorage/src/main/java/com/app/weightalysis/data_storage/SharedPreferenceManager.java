@@ -10,9 +10,18 @@ public class SharedPreferenceManager implements SharedPreferenceContract {
 
     private SharedPreferences sharedPreferences;
     private Context mContext;
+    private static SharedPreferenceManager sharedPreferenceManager;
 
     public SharedPreferenceManager(Context mContext) {
         this.mContext = mContext;
+    }
+
+    public static void createInstance(Context mContext) {
+        sharedPreferenceManager = new SharedPreferenceManager(mContext);
+    }
+
+    public static SharedPreferenceManager getInstance() {
+        return sharedPreferenceManager;
     }
 
     public void putString(String key, String value) {

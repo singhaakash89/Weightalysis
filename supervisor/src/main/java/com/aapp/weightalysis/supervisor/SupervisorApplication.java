@@ -3,6 +3,7 @@ package com.aapp.weightalysis.supervisor;
 import android.content.Context;
 
 import com.app.weightalysis.data_storage.PrimaryDBProvider;
+import com.app.weightalysis.data_storage.SharedPreferenceManager;
 import com.app.weightalysis.data_storage.StandardStorageHelper;
 import com.app.weightalysis.oneui.toast_manager.ToastManager;
 /**
@@ -23,6 +24,7 @@ public class SupervisorApplication {
             StandardStorageHelper.createInstance(mContext);
             PrimaryDBProvider.getInstance().getWritableDatabase();
             ToastManager.createInstance(mContext);
+            SharedPreferenceManager.createInstance(mContext);
         } catch (Exception e) {
             e.printStackTrace();
         }
