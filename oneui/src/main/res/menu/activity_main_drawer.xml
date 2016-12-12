@@ -20,6 +20,11 @@
             android:id="@+id/nav_graph_month"
             android:icon="@drawable/ic_graph_month"
             android:title="Monthly Graph" />
+
+        <item
+            android:id="@+id/nav_all_in_one"
+            android:icon="@drawable/ic_all_filter"
+            android:title="All-in-One" />
     </group>
 
 </menu>

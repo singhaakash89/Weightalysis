@@ -22,6 +22,8 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by Aakash Singh on 10-12-2016.
@@ -51,6 +53,13 @@ public class StandardGraphContract implements GraphContract {
         Cursor cursor = getDayCursor(monthInInteger, Integer.parseInt(year));
         weightBeanArrayList = getUserBeanArrayList(cursor);
 
+        //Sorting on the basis of dates
+        Collections.sort(weightBeanArrayList);
+
+        for (WeightBean w : weightBeanArrayList) {
+            Logger.putInDebugLog(TAG, "date : " + w.getDate() + " value", " weight : " + w.getWeight() + " value");
+        }
+
         if (weightBeanArrayList.size() != 0) {
             CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
             customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.DAY);
@@ -68,10 +77,10 @@ public class StandardGraphContract implements GraphContract {
             //X-AXIS
             graphView.getViewport().setXAxisBoundsManual(true);
             //TO SEE THE EXACT NUMBER OF LABELS ON X-AXIS AT ONCE
-            graphView.getGridLabelRenderer().setNumHorizontalLabels(6);
+            graphView.getGridLabelRenderer().setNumHorizontalLabels(4);
             graphView.getViewport().setMinX(1);
             //TO SEE THE VIEW WINDOW CONTAINING UPTO 6 LABELS AT ONCE IN SINGLE WINDOW BUT MIGHT BE WITH NO DIGITS.
-            graphView.getViewport().setMaxX(6);
+            graphView.getViewport().setMaxX(4);
             graphView.addSeries(lineGraphSeries);
             graphView.addSeries(pointLineGraphSeries);
         } else {
@@ -180,6 +189,7 @@ public class StandardGraphContract implements GraphContract {
             }
             cursor.close();
         }
+        Logger.putInDebugLog(TAG, "weightBeanArrayList.size()", "" + weightBeanArrayList.size() + " value");
         return weightBeanArrayList;
     }
 
@@ -191,8 +201,7 @@ public class StandardGraphContract implements GraphContract {
         int date = cursor.getInt(cursor.getColumnIndex(WeightAccessor.DATE));
         int month = cursor.getInt(cursor.getColumnIndex(WeightAccessor.MONTH));
         int year = cursor.getInt(cursor.getColumnIndex(WeightAccessor.YEAR));
-        Logger.putInDebugLog(TAG, "Weight : " + weight + " -  null", " Date : " + date + " - null");
-        Logger.putInDebugLog(TAG, "Weight : " + weight + " -  null", " Month : " + month + " - null");
+        Logger.putInDebugLog(TAG, "Weight : " + weight + " -  null", " Date : " + date + "/" + month + "/" + year + " - null");
         weightBean.setWeight(weight);
         weightBean.setDate(date);
         weightBean.setMonth(month);
@@ -205,7 +214,9 @@ public class StandardGraphContract implements GraphContract {
         int index = 0;
         if (graphType.equals(GraphType.DAY)) {
             for (WeightBean weightBean : weightBeanArrayList) {
-                dataPoint[index++] = new CustomDataPoint(weightBean.getDate(), weightBean.getWeight());
+                dataPoint[index] = new CustomDataPoint(weightBean.getDate(), weightBean.getWeight());
+                Logger.putInDebugLog(TAG, "date : " + weightBean.getDate() + " value", " weight : " + weightBean.getWeight() + ", at index :" + index + " value");
+                index++;
             }
         } else if (graphType.equals(GraphType.WEEK)) {
             int i = 1;
@@ -214,7 +225,8 @@ public class StandardGraphContract implements GraphContract {
             }
         } else if (graphType.equals(GraphType.MONTH)) {
             for (WeightBean weightBean : weightBeanArrayList) {
-                dataPoint[index++] = new CustomDataPoint(weightBean.getMonth(), weightBean.getWeight());
+                dataPoint[index] = new CustomDataPoint(weightBean.getMonth(), weightBean.getWeight());
+                index++;
             }
         }
         return dataPoint;
@@ -226,6 +238,7 @@ public class StandardGraphContract implements GraphContract {
         graphDataStorageContract = new GraphDataDataStorageProvider();
         Cursor cursor = graphDataStorageContract.queryForSelectedCols(WeightSchemaBuilder.TABLE_NAME, WeightAccessor.getTableProjection(), WeightAccessor.MONTH, WeightAccessor.YEAR, month, year);
         Logger.putInDebugLog(TAG, "cursor : ", "" + cursor + " - null");
+        Logger.putInDebugLog(TAG, "cursor count: ", "" + cursor.getCount() + " - null");
         return cursor;
     }
 
@@ -254,30 +267,14 @@ public class StandardGraphContract implements GraphContract {
         Logger.putInDebugLog(TAG, "Inside", "getWeekDataPoint");
         ArrayList<WeightBean> weightBeanArrayList = new ArrayList<>();
         WeightBean weightBean = null;
-        Cursor cursor = null;
+        Cursor[] cursorArray = {getWeek1Cursor(monthInInteger), getWeek2and3Cursor(monthInInteger, 8, 14), getWeek2and3Cursor(monthInInteger, 15, 21), getWeek4Cursor(monthInInteger)};
 
-        //week1
-        cursor = getWeek1Cursor(monthInInteger);
-        weightBean = getWeeklyBean(cursor, monthInInteger);
-        weightBeanArrayList.add(weightBean);
-
-        //week2
-        cursor = getWeek2and3Cursor(monthInInteger, 8, 14);
-        weightBean = getWeeklyBean(cursor, monthInInteger);
-        weightBeanArrayList.add(weightBean);
-
-
-        //week3
-        cursor = getWeek2and3Cursor(monthInInteger, 15, 21);
-        weightBean = getWeeklyBean(cursor, monthInInteger);
-        weightBeanArrayList.add(weightBean);
-
-
-        //week4
-        cursor = getWeek4Cursor(monthInInteger);
-        weightBean = getWeeklyBean(cursor, monthInInteger);
-        weightBeanArrayList.add(weightBean);
-
+        for (Cursor cursor : cursorArray) {
+            weightBean = getWeeklyBean(cursor, monthInInteger);
+            if (0 != weightBean.getWeight()) {
+                weightBeanArrayList.add(weightBean);
+            }
+        }
         return weightBeanArrayList;
     }
 
@@ -302,9 +299,11 @@ public class StandardGraphContract implements GraphContract {
                 cursor.moveToNext();
             }
             cursor.close();
-            weightBean = new WeightBean();
-            Logger.putInDebugLog(TAG, "avgWeight : ", String.valueOf(getAvgWeight(totalWeight, cursorCount)));
-            weightBean.setWeight(getAvgWeight(totalWeight, cursorCount));
+            if (0 != getAvgWeight(totalWeight, cursorCount)) {
+                Logger.putInDebugLog(TAG, "Inside if", "getAvgWeight > 0");
+                weightBean = new WeightBean();
+                weightBean.setWeight(getAvgWeight(totalWeight, cursorCount));
+            }
         }
         return weightBean;
     }
@@ -343,15 +342,17 @@ public class StandardGraphContract implements GraphContract {
                     totalWeight += Integer.parseInt(cursor.getString(cursor.getColumnIndex(WeightAccessor.WEIGHT)));
                     Logger.putInDebugLog(TAG, "totalWeight :", "" + totalWeight + " null");
                     month = cursor.getInt(cursor.getColumnIndex(WeightAccessor.MONTH));
+                    Logger.putInDebugLog(TAG, "month : ", "" + month);
                     cursor.moveToNext();
                 }
                 cursor.close();
-                weightBean = new WeightBean();
-                Logger.putInDebugLog(TAG, "month : ", "" + month);
-                weightBean.setMonth(month);
-                Logger.putInDebugLog(TAG, "avgWeight : ", String.valueOf(getAvgWeight(totalWeight, cursorCount)));
-                weightBean.setWeight(getAvgWeight(totalWeight, cursorCount));
-                weightBeanArrayList.add(weightBean);
+                if (0 != getAvgWeight(totalWeight, cursorCount)) {
+                    Logger.putInDebugLog(TAG, "Inside if", "getAvgWeight > 0");
+                    weightBean = new WeightBean();
+                    weightBean.setMonth(month);
+                    weightBean.setWeight(getAvgWeight(totalWeight, cursorCount));
+                    weightBeanArrayList.add(weightBean);
+                }
             }
         }
         return weightBeanArrayList;
@@ -359,9 +360,11 @@ public class StandardGraphContract implements GraphContract {
 
     @Override
     public int getAvgWeight(int totalWeight, int count) {
+        Logger.putInDebugLog(TAG, "Inside ", "getAvgWeight");
         Logger.putInDebugLog(TAG, "totalWeight :" + totalWeight, " count : " + count + " null");
         int avgWeight = 0;
         avgWeight = (totalWeight / count);
+        Logger.putInDebugLog(TAG, "avgWeight : ", "" + avgWeight);
         return avgWeight;
     }
 

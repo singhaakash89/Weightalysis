@@ -31,4 +31,9 @@ public class BaseActivityViewPresenter implements BaseActivityViewContract {
     public void inflateMonthFragment() {
         view.inflateMonthFragment();
     }
+
+    @Override
+    public void inflateAllInOneFragment() {
+        view.inflateAllInOneFragment();
+    }
 }

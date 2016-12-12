@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/standardAdminRoles_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/layout_background_low_gray">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Spinner
+                android:id="@+id/dailySpinner"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/daily_spinner_entries"
+                android:spinnerMode="dialog"
+                android:textAlignment="center"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/layout_background_yellow_border_square" />
+
+            <Spinner
+                android:id="@+id/weeklySpinner"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/weekly_spinner_entries"
+                android:spinnerMode="dialog"
+                android:textAlignment="center"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/layout_background_yellow_border_square"/>
+
+            <Spinner
+                android:id="@+id/monthlySpinner"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/monthly_spinner_entries"
+                android:spinnerMode="dialog"
+                android:textAlignment="center"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/layout_background_yellow_border_square"/>
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="Weight"
+        android:rotation="-90"
+        android:textColor="@color/navy_blue_light"
+        android:textSize="16sp"
+        android:layout_marginTop="250dp"
+        android:layout_marginLeft="-5dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="15dp"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Weight - Day Chart"
+            android:textColor="@color/navy_blue_light"
+            android:textSize="16sp"
+            android:layout_marginTop="5dp"/>
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="Days"
+            android:textColor="@color/navy_blue_light"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

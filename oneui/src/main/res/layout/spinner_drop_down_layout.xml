@@ -19,14 +19,16 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/text1"
     style="?android:attr/spinnerDropDownItemStyle"
-    android:layout_width="match_parent"
+    android:layout_width="200dp"
     android:layout_height="wrap_content"
-    android:background="@color/navy_blue_light"
+    android:background="@color/white"
     android:fontFamily="@string/font_family_thin"
     android:paddingBottom="10dp"
+    android:layout_gravity="center_horizontal"
     android:paddingTop="10dp"
     android:singleLine="true"
     android:text="Hello"
-    android:textColor="@color/white"
-    android:textStyle="bold" />
+    android:textColor="@color/navy_blue_light"
+    android:textStyle="bold"
+    android:gravity="center_horizontal"/>
 

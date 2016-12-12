@@ -33,6 +33,7 @@ import com.app.graph.model.Week;
 import com.app.weightalysis.data_storage.SharedPreferenceManager;
 import com.app.weightalysis.logger.Logger;
 import com.app.weightalysis.oneui.R;
+import com.app.weightalysis.oneui.fragments.All_In_One_Fragment;
 import com.app.weightalysis.oneui.fragments.DayFragment;
 import com.app.weightalysis.oneui.fragments.HomeFragment;
 import com.app.weightalysis.oneui.fragments.MonthFragment;
@@ -68,6 +69,7 @@ public class BaseActivity extends AppCompatActivity
     private DayFragment dayFragment;
     private WeekFragment weekFragment;
     private MonthFragment monthFragment;
+    private All_In_One_Fragment all_in_one_fragment;
     private TextView titleTextView;
     private TextView name, email;
     private LinearLayout linearLayout;
@@ -83,6 +85,7 @@ public class BaseActivity extends AppCompatActivity
         dayFragment = new DayFragment();
         weekFragment = new WeekFragment();
         monthFragment = new MonthFragment();
+        all_in_one_fragment = new All_In_One_Fragment();
         setContentView(R.layout.activity_main);
 
         //Appbar
@@ -207,13 +210,16 @@ public class BaseActivity extends AppCompatActivity
             ToastManager.getInstance().showSimpleToastShort("Diary is selected");
         } else if (id == R.id.nav_graph_date) {
             baseActivityPresenter.inflateDayFragment();
-            ToastManager.getInstance().showSimpleToastShort("Daily Graph is selected");
+            ToastManager.getInstance().showSimpleToastShort("Daily Graph selected");
         } else if (id == R.id.nav_graph_week) {
             baseActivityPresenter.inflateWeekFragment();
-            ToastManager.getInstance().showSimpleToastShort("Weekly Graph is selected");
+            ToastManager.getInstance().showSimpleToastShort("Weekly Graph selected");
         } else if (id == R.id.nav_graph_month) {
             baseActivityPresenter.inflateMonthFragment();
-            ToastManager.getInstance().showSimpleToastShort("Monthly Graph is selected");
+            ToastManager.getInstance().showSimpleToastShort("Monthly Graph selected");
+        }else if (id == R.id.nav_all_in_one) {
+            baseActivityPresenter.inflateAllInOneFragment();
+            ToastManager.getInstance().showSimpleToastShort("All-in-one Graph selected");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -240,7 +246,6 @@ public class BaseActivity extends AppCompatActivity
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
 //                graphView = (GraphView) findViewById(R.id.graph_new);
 //                graphView.setVisibility(View.INVISIBLE);
                 if (null != dateString) {
@@ -250,7 +255,11 @@ public class BaseActivity extends AppCompatActivity
                     }
                     graphDataStorageContract = new GraphDataDataStorageProvider();
                     long id = graphDataStorageContract.insertData(Integer.parseInt(weightET.getText().toString()), Integer.parseInt(str[0]), Integer.parseInt(str[1]), Integer.parseInt(str[2]));
-                    ToastManager.getInstance().showSimpleToastShort("row stored at : " + id + " position");
+                    if (-1 != id) {
+                        dialog.dismiss();
+                        ToastManager.getInstance().showSimpleToastShort("Entry saved into diary");
+                    } else
+                        ToastManager.getInstance().showSimpleToastShort("Already exists, please choose different date");
                 }
             }
         });
@@ -321,6 +330,19 @@ public class BaseActivity extends AppCompatActivity
             @Override
             public void run() {
                 fragmentTransaction.replace(R.id.content_main, monthFragment, "monthFragment");
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        }, TRANSITION_INTERVAL);
+    }
+
+    @Override
+    public void inflateAllInOneFragment() {
+        titleTextView.setText("All-in-one Graph");
+        fragmentTransaction = fragmentManager.beginTransaction();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fragmentTransaction.replace(R.id.content_main, all_in_one_fragment, "all_in_one_fragment");
                 fragmentTransaction.commitAllowingStateLoss();
             }
         }, TRANSITION_INTERVAL);

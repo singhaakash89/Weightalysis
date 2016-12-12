@@ -8,7 +8,7 @@ import com.app.weightalysis.data_storage.accessor.WeightAccessor;
  * Created by Aakash Singh on 09-12-2016.
  */
 
-public class WeightBean {
+public class WeightBean implements Comparable {
     private int weight;
     private int date;
     private int month;
@@ -55,4 +55,14 @@ public class WeightBean {
         return row;
     }
 
+    @Override
+    public int compareTo(Object another) {
+        int compareDate = ((WeightBean) another).getDate();
+
+        /* For Ascending order*/
+        return this.date-compareDate;
+
+        /* For Descending order do like this */
+        //return compareDate - this.date;
+    }
 }

@@ -19,7 +19,8 @@ public class WeightSchemaBuilder {
             WEIGHT + " INTEGER NOT NULL , " +
             DATE + " INTEGER NOT NULL , " +
             MONTH + " INTEGER NOT NULL , " +
-            YEAR + " INTEGER NOT NULL);";
+            YEAR + " INTEGER NOT NULL ," +
+            "UNIQUE(" + DATE + "," + MONTH + "));";
 
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 

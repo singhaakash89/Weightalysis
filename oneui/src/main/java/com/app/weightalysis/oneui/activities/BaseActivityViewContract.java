@@ -13,4 +13,6 @@ public interface BaseActivityViewContract {
     void inflateWeekFragment();
 
     void inflateMonthFragment();
+
+    void inflateAllInOneFragment();
 }
