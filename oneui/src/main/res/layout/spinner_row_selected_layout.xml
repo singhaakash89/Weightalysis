@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
-    android:background="@color/transparent"
+    android:background="@drawable/layout_background_button_navy_light"
     android:fontFamily="@string/font_family_thin"
     android:text="Hello"
-    android:textColor="@color/blue_color"
+    android:textColor="@color/white"
     android:textStyle="bold"
     android:gravity="center_horizontal"/>

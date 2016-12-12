@@ -10,4 +10,6 @@ import java.util.List;
 
 public interface SpinnerAdapterContract {
     public boolean setAdapter(Spinner spinner, List<String> list);
+
+    public boolean setAdapterSelected(Spinner spinner, List<String> list);
 }

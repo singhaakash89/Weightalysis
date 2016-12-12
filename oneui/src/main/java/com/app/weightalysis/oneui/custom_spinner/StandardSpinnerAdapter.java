@@ -41,4 +41,16 @@ public class StandardSpinnerAdapter implements SpinnerAdapterContract {
         }
 
     }
+
+    public boolean setAdapterSelected(Spinner spinner, List<String> arrayList) {
+        if (arrayList == null) {
+            throw new IllegalArgumentException("Drop down array is null");
+        } else {
+            spinnerArrayAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_row_selected_layout, arrayList);
+            spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_drop_down_layout); // The drop down view
+            spinner.setAdapter(spinnerArrayAdapter);
+            return true;
+        }
+
+    }
 }

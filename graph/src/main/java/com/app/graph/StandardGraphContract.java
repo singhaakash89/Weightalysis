@@ -42,6 +42,13 @@ public class StandardGraphContract implements GraphContract {
     }
 
     @Override
+    public void resetGraph(GraphView graphView) {
+        //reseting graph
+        graphView.removeAllSeries();
+        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter());
+    }
+
+    @Override
     public void drawGraphByDay(GraphView graphView, String month, String year) {
         //reseting graph
         graphView.removeAllSeries();
@@ -101,7 +108,10 @@ public class StandardGraphContract implements GraphContract {
         weightBeanArrayList = getWeekDataPoint(monthInInteger, Integer.parseInt(year));
         Logger.putInDebugLog(TAG, "weightBeanArrayList.size()", "" + weightBeanArrayList.size());
 
-        if (weightBeanArrayList.get(0).getWeight() != 0) {
+        //Sorting on the basis of dates
+        Collections.sort(weightBeanArrayList);
+
+        if (weightBeanArrayList.size() > 0 && weightBeanArrayList.get(0).getWeight() != 0) {
             CustomDataPoint[] customDataPoint = new CustomDataPoint[weightBeanArrayList.size()];
             customDataPoint = initializeDataPointsFromList(customDataPoint, weightBeanArrayList, GraphType.WEEK);
             LineGraphSeries<CustomDataPoint> lineGraphSeries = new LineGraphSeries<>(customDataPoint);
@@ -219,9 +229,8 @@ public class StandardGraphContract implements GraphContract {
                 index++;
             }
         } else if (graphType.equals(GraphType.WEEK)) {
-            int i = 1;
             for (WeightBean weightBean : weightBeanArrayList) {
-                dataPoint[index++] = new CustomDataPoint(i++, weightBean.getWeight());
+                dataPoint[index++] = new CustomDataPoint(weightBean.getDate(), weightBean.getWeight());
             }
         } else if (graphType.equals(GraphType.MONTH)) {
             for (WeightBean weightBean : weightBeanArrayList) {
@@ -265,20 +274,22 @@ public class StandardGraphContract implements GraphContract {
 
     public ArrayList<WeightBean> getWeekDataPoint(int monthInInteger, int year) {
         Logger.putInDebugLog(TAG, "Inside", "getWeekDataPoint");
+        int weekCount = 1;
         ArrayList<WeightBean> weightBeanArrayList = new ArrayList<>();
         WeightBean weightBean = null;
         Cursor[] cursorArray = {getWeek1Cursor(monthInInteger), getWeek2and3Cursor(monthInInteger, 8, 14), getWeek2and3Cursor(monthInInteger, 15, 21), getWeek4Cursor(monthInInteger)};
 
         for (Cursor cursor : cursorArray) {
-            weightBean = getWeeklyBean(cursor, monthInInteger);
+            weightBean = getWeeklyBean(cursor, monthInInteger,weekCount);
             if (0 != weightBean.getWeight()) {
                 weightBeanArrayList.add(weightBean);
             }
+            weekCount++;
         }
         return weightBeanArrayList;
     }
 
-    private WeightBean getWeeklyBean(Cursor cursor, int monthInInteger) {
+    private WeightBean getWeeklyBean(Cursor cursor, int monthInInteger, int weekCount) {
         Logger.putInDebugLog(TAG, "Inside : ", "getWeeklyBean");
         Logger.putInDebugLog(TAG, "month : ", "" + monthInInteger);
         WeightBean weightBean = new WeightBean();
@@ -302,6 +313,7 @@ public class StandardGraphContract implements GraphContract {
             if (0 != getAvgWeight(totalWeight, cursorCount)) {
                 Logger.putInDebugLog(TAG, "Inside if", "getAvgWeight > 0");
                 weightBean = new WeightBean();
+                weightBean.setDate(weekCount);
                 weightBean.setWeight(getAvgWeight(totalWeight, cursorCount));
             }
         }

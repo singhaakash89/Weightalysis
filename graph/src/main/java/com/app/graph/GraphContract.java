@@ -14,6 +14,8 @@ import java.util.ArrayList;
  */
 
 public interface GraphContract {
+    void resetGraph(GraphView graphView);
+
     void drawGraphByDay(GraphView graphView, String month, String year);
 
     void drawGraphByWeek(GraphView graphView, String month, String year);
