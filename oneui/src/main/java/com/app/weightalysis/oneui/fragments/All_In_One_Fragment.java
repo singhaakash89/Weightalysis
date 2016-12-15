@@ -43,6 +43,7 @@ public class All_In_One_Fragment extends Fragment {
     private List<String> arrayList;
     private StandardSpinnerAdapter standardSpinnerAdapter;
     private Button monthlyButton;
+    private TextView labelXaxis, titleGraph;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +56,8 @@ public class All_In_One_Fragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        titleGraph = (TextView) getActivity().findViewById(R.id.titleGraph);
+        labelXaxis = (TextView) getActivity().findViewById(R.id.labelXaxis);
         graphView = (GraphView) getActivity().findViewById(R.id.graph);
         dailySpinner = (Spinner) getActivity().findViewById(R.id.dailySpinner);
         weeklySpinner = (Spinner) getActivity().findViewById(R.id.weeklySpinner);
@@ -75,6 +78,9 @@ public class All_In_One_Fragment extends Fragment {
                 month = spinner.getSelectedItem().toString();
                 if (!month.equalsIgnoreCase("Daily")) {
                     toastManager.showSimpleToastShort("Daily Filter selected");
+                    //Changing graph title and x-axis label
+                    titleGraph.setText("Weight - Day Chart");
+                    labelXaxis.setText("Days");
                     //making other spinners as default value
                     weeklySpinner.setSelection(0);
                     monthlySpinner.setSelection(0);
@@ -103,6 +109,9 @@ public class All_In_One_Fragment extends Fragment {
                 month = spinner.getSelectedItem().toString();
                 if (!month.equalsIgnoreCase("Weekly")) {
                     toastManager.showSimpleToastShort("Weekly Filter selected");
+                    //Changing graph title and x-axis label
+                    titleGraph.setText("Weight - Week Chart");
+                    labelXaxis.setText("Weeks");
                     //making other spinners as default value
                     dailySpinner.setSelection(0);
                     monthlySpinner.setSelection(0);
@@ -131,6 +140,9 @@ public class All_In_One_Fragment extends Fragment {
                 year = spinner.getSelectedItem().toString();
                 if (!year.equalsIgnoreCase("Monthly")) {
                     toastManager.showSimpleToastShort(year + " selected");
+                    //Changing graph title and x-axis label
+                    titleGraph.setText("Weight - Month Chart");
+                    labelXaxis.setText("Months");
                     //making other spinners as default value
                     weeklySpinner.setSelection(0);
                     dailySpinner.setSelection(0);
